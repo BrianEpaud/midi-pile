@@ -4,3 +4,21 @@
 .booking-intro{padding:42px 34px;background:#e8efdf}.booking-symbol{width:58px;height:58px;border-radius:18px;background:#FFC400;display:grid;place-items:center;margin-bottom:29px}.booking-symbol svg{width:35px;height:35px}.booking-intro .eyebrow{font-size:9px;line-height:1.7;letter-spacing:.09em;margin-bottom:17px}#booking-dialog h2{font-size:33px;line-height:1.15;letter-spacing:-.045em;margin-bottom:18px}.booking-intro>p:last-of-type{font-size:13px;line-height:1.8}.booking-people{display:flex;align-items:center;margin-top:30px}.booking-people img{border:3px solid #e8efdf;border-radius:50%;object-fit:cover;height:44px;width:44px}.booking-people img+img{margin-left:-12px}.booking-people span{font-size:12px;font-weight:800;margin-left:10px;line-height:1.6}.booking-people small{font-size:9px;font-weight:400;display:inline-block}
 .booking-placeholder{padding:64px 34px 34px;align-self:center}.booking-status{font-size:8px;letter-spacing:.07em;padding:8px 10px;background:#f4efdb;border-radius:6px;display:inline-block;margin-bottom:21px}#booking-dialog h3{font-size:25px;line-height:1.2;letter-spacing:-.03em;margin-bottom:15px}.booking-placeholder>p{font-size:12px;line-height:1.8;color:#526c59}.booking-steps{display:grid;gap:14px;margin:24px 0}.booking-steps>span{font-size:12px;display:flex;align-items:center;gap:12px}.booking-steps b{font-size:10px;border:1px solid #b7c9b1;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-weight:500}.booking-placeholder .caption{font-size:10px}.booking-return{width:100%;font-size:12px;justify-content:space-between;margin-top:20px}
 @media(max-width:620px){.booking-header{font-size:10px!important;padding:12px 13px!important;gap:8px!important}.contact-actions{gap:19px}#booking-dialog[open]{grid-template-columns:1fr}.booking-intro{padding:28px 25px 24px}.booking-symbol{width:42px;height:42px;margin-bottom:18px}.booking-symbol svg{width:28px}.booking-intro .eyebrow{font-size:8px;max-width:235px}#booking-dialog h2{font-size:29px}.booking-people{margin-top:17px}.booking-placeholder{padding:25px}.booking-placeholder h3{font-size:23px}.booking-steps{margin:18px 0;gap:10px}}
+
+/* Agenda Calendly, chargé uniquement à l’ouverture du rendez-vous. */
+#booking-dialog.booking-connected{width:min(1100px,calc(100% - 24px));max-width:1100px;position:fixed}
+#booking-dialog.booking-connected[open]{grid-template-columns:minmax(240px, .75fr) minmax(0, 1.5fr)}
+#booking-dialog .dialog-close{position:absolute}
+.booking-connected .booking-placeholder{padding:52px 20px 20px;align-self:stretch;min-width:0}
+#calendly-embed{width:100%;height:700px;min-width:0}
+#calendly-embed iframe{width:100%;height:100%;border:0}
+.booking-fallback{margin:16px 0 8px;font-size:13px}
+.booking-fallback a{color:#0B3D33;text-decoration:underline}
+@media(max-width:760px){
+  #booking-dialog.booking-connected[open]{grid-template-columns:1fr}
+  .booking-connected .booking-intro{padding:28px 22px 16px}
+  .booking-connected .booking-symbol,.booking-connected .booking-people{display:none}
+  #booking-dialog.booking-connected h2{font-size:26px;margin-bottom:10px}
+  .booking-connected .booking-placeholder{padding:16px 8px}
+  #calendly-embed{height:720px}
+}
