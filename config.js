@@ -2,7 +2,7 @@
 window.MIDI_CONFIG = {
   guideUrl: null,
   // URL HTTPS publique du rendez-vous Calendly (ou autre agenda). Null = maquette.
-  bookingUrl: null,
+  bookingUrl: 'https://calendly.com/epaud-brian/nouvelle-reunion',
   contact: {
     city: 'Les Sables-d’Olonne', region: 'Vendée',
     phone: null, email: null, address: null, googleReviewsUrl: null,
