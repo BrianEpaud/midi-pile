@@ -1,90 +1,10 @@
 (() => {
-  'use strict';
-  let bookingUrl = null;
-  try {
-    const raw = window.MIDI_CONFIG?.bookingUrl;
-    if (raw) {
-      const parsed = new URL(raw);
-      if (parsed.protocol === 'https:' && !parsed.username && !parsed.password) bookingUrl = parsed.href;
-    }
-  } catch {}
-  const dialog = document.createElement('dialog');
-  dialog.id = 'booking-dialog';
-  dialog.setAttribute('aria-labelledby', 'booking-title');
-  dialog.innerHTML = `<button type="button" class="dialog-close" aria-label="Fermer la prise de rendez-vous">×</button>
-    <div class="booking-intro"><span class="booking-symbol" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="11" width="34" height="31" rx="5"/><path d="M15 6v10M33 6v10M7 21h34M17 31l5 5 10-11"/></svg></span><p class="eyebrow">Votre projet commence par un échange</p><h2 id="booking-title">Trouvons le bon<br>moment pour parler.</h2><p>Une question sur le solaire, une batterie ou une borne ? Prenons le temps de comprendre votre besoin.</p><div class="booking-people"><img src="/assets/brian.jpeg" alt="" width="44" height="44"><img src="/assets/alexandre.jpeg" alt="" width="44" height="44"><span>Brian & Alexandre<br><small>Vos interlocuteurs aux Sables-d’Olonne</small></span></div></div>
-    <div class="booking-placeholder"><span class="booking-status">MAQUETTE · AGENDA NON CONNECTÉ</span><h3>Les créneaux arrivent bientôt.</h3><p>L’agenda de réservation n’est pas encore activé. Aucun créneau ne peut être réservé pour le moment.</p><div class="booking-steps"><span><b>01</b> Choisir un créneau</span><span><b>02</b> Présenter votre projet</span><span><b>03</b> Recevoir la confirmation</span></div><p class="caption">Aperçu du futur parcours. Aucun rendez-vous ni aucune donnée ne sont enregistrés ici.</p><button type="button" class="button booking-return">Continuer ma visite <span>↗</span></button></div>`;
-  if (bookingUrl) {
-    dialog.classList.add('booking-connected');
-    dialog.querySelector('.booking-placeholder').innerHTML = '<h3>Choisissez votre créneau</h3><p>Réservez directement dans l’agenda ci-dessous.</p><div id="calendly-embed"></div><p class="booking-fallback"><a target="_blank" rel="noopener noreferrer">Ouvrir l’agenda dans un nouvel onglet ↗</a></p><p class="caption">La réservation est gérée par Calendly.</p>';
-    dialog.querySelector('.booking-fallback a').href = bookingUrl;
-  }
-  document.body.append(dialog);
-  let calendarLoaded = false;
-  let calendarLoading = false;
-  function loadCalendar() {
-    if (!bookingUrl || calendarLoaded || calendarLoading) return;
-    calendarLoading = true;
-    const embed = dialog.querySelector('#calendly-embed');
-    embed.textContent = 'Chargement de l’agenda…';
-    const initialize = () => {
-      calendarLoading = false;
-      try {
-        embed.textContent = '';
-        window.Calendly.initInlineWidget({url: bookingUrl, parentElement: embed});
-        const frame = embed.querySelector('iframe');
-        if (frame) frame.title = 'Choisir un rendez-vous avec Midi Pile';
-        calendarLoaded = true;
-      } catch {
-        embed.textContent = 'L’agenda ne peut pas s’afficher. Utilisez le lien ci-dessous.';
-      }
-    };
-    if (window.Calendly?.initInlineWidget) { initialize(); return; }
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    script.onload = initialize;
-    script.onerror = () => {
-      calendarLoading = false;
-      script.remove();
-      embed.textContent = 'L’agenda ne peut pas se charger. Utilisez le lien ci-dessous.';
-    };
-    document.head.append(script);
-  }
-  function openBooking(link) {
-    if (typeof dialog.showModal !== 'function') {
-      if (bookingUrl) window.location.assign(bookingUrl);
-      return;
-    }
-    opener = link;
-    if (!dialog.open) dialog.showModal();
-    loadCalendar();
-  }
-  let opener;
-  const close = () => dialog.close();
-  dialog.querySelector('.dialog-close').addEventListener('click', close);
-  dialog.querySelector('.booking-return')?.addEventListener('click', close);
-  dialog.addEventListener('close', () => opener?.focus({preventScroll:true}));
-  dialog.addEventListener('click', e => {if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
-  function configureLinks() {
-    document.querySelectorAll('[data-booking]').forEach(link => {
-      link.href = bookingUrl || '/#rendez-vous';
-      link.removeAttribute('target');
-      link.setAttribute('aria-label', 'Prendre rendez-vous en ligne');
-      link.setAttribute('aria-haspopup','dialog');
-      link.setAttribute('aria-controls','booking-dialog');
-    });
-  }
-  configureLinks();
-  // Le résultat du simulateur est créé après le chargement de la page.
-  const results = document.querySelector('#sim-result');
-  if (results) new MutationObserver(configureLinks).observe(results,{childList:true,subtree:true});
-  document.addEventListener('click', e => {
-    const link = e.target.closest('[data-booking]');
-    if(!link || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault(); openBooking(link);
-  });
-  if(location.hash==='#rendez-vous') {
-    openBooking();
-  }
+ 'use strict';const config=window.MIDI_CONFIG||{};
+ const valid=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}};
+ const dialog=document.createElement('dialog');dialog.id='booking-dialog';dialog.setAttribute('aria-labelledby','booking-title');
+ dialog.innerHTML=`<button type="button" class="dialog-close" aria-label="Fermer la prise de rendez-vous">×</button><div class="booking-intro"><p class="eyebrow">On commence par faire connaissance</p><h2 id="booking-title">Un appel ?<br>Un café chez vous ?</h2><p>Choisissez le premier échange qui vous convient.</p><div class="booking-people"><img src="/assets/brian.jpeg" alt="" width="44" height="44"><img src="/assets/alexandre.jpeg" alt="" width="44" height="44"><span>Brian & Alexandre<br><small>Vos interlocuteurs en Vendée</small></span></div></div><div class="booking-choice"><button type="button" class="booking-option" data-kind="phone" aria-pressed="false"><strong>☎ Un rendez-vous téléphonique</strong><span>Aborder votre projet, vos usages et vos premières questions.</span></button><button type="button" class="booking-option" data-kind="home" aria-pressed="false"><strong>⌂ Une visite chez vous</strong><span>Une étude détaillée de votre maison, de la toiture et de l’installation électrique.</span></button><div id="booking-next" role="status"></div></div>`;
+ document.body.append(dialog);let opener;const next=dialog.querySelector('#booking-next');
+ dialog.querySelectorAll('[data-kind]').forEach(button=>button.addEventListener('click',()=>{dialog.querySelectorAll('[data-kind]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));const home=button.dataset.kind==='home',url=valid(home?config.bookingHomeUrl:config.bookingPhoneUrl);next.replaceChildren();const info=document.createElement('p');info.className='booking-status-message';info.textContent=url?(home?'Choisissez votre créneau. Votre adresse complète sera demandée dans le formulaire de réservation.':'Choisissez votre créneau et indiquez le numéro auquel vous joindre.'):'Cet agenda dédié est en préparation. Vous pouvez utiliser notre agenda général ; précisez le type de rendez-vous souhaité dans votre message. Le choix ci-dessus ne réserve pas de créneau.';next.append(info);const target=url||valid(config.bookingUrl);if(target){const a=document.createElement('a');a.className='booking-agenda-link';a.href=target;a.target='_blank';a.rel='noopener noreferrer';a.textContent=url?'Choisir mon créneau ↗':'Ouvrir l’agenda général ↗';next.append(a);}}));
+ const close=()=>dialog.close();dialog.querySelector('.dialog-close').addEventListener('click',close);dialog.addEventListener('close',()=>opener?.focus({preventScroll:true}));dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
+ function open(link){opener=link;if(!dialog.open)dialog.showModal();}document.addEventListener('click',e=>{const a=e.target.closest('[data-booking]');if(!a||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button!==0)return;e.preventDefault();open(a);});document.querySelectorAll('[data-booking]').forEach(a=>{a.href='/#rendez-vous';a.setAttribute('aria-haspopup','dialog');a.setAttribute('aria-controls','booking-dialog');});if(location.hash==='#rendez-vous')open();
 })();
